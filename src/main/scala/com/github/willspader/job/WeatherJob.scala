@@ -7,7 +7,7 @@ import sttp.client.ResponseError
 
 import java.time.Instant
 
-class WheaterJob extends Job {
+class WeatherJob extends Job {
 
   // TODO: Constants file
   val REPORTS: Int = 12

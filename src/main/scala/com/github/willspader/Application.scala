@@ -2,7 +2,7 @@ package com.github.willspader
 
 import org.quartz.{CronScheduleBuilder, JobBuilder, JobDetail, Scheduler, Trigger, TriggerBuilder}
 import org.quartz.impl.StdSchedulerFactory
-import com.github.willspader.job.WheaterJob
+import com.github.willspader.job.WeatherJob
 
 object Application {
 
@@ -11,8 +11,8 @@ object Application {
     // OWM
     // https://openweathermap.org/api/one-call-api
 
-    // it creates the wheater job
-    val job: JobDetail = JobBuilder.newJob(classOf[WheaterJob]).withIdentity("wheater-job").build()
+    // it creates the Weather job
+    val job: JobDetail = JobBuilder.newJob(classOf[WeatherJob]).withIdentity("weather-job").build()
 
     // trigger w/ the cron expression for the scheduler
     // the cron expression 0 30 5 ? * * * means everyday at 05:30 AM

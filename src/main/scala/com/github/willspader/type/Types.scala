@@ -2,7 +2,6 @@ package com.github.willspader.`type`
 
 object Types {
 
-  // daily -> daily list
   case class WeatherResponse(hourly: List[WeatherInfo])
 
   // dt -> Time of the forecasted data, Unix, UTC
