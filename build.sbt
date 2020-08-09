@@ -4,12 +4,14 @@ version := "0.1"
 
 scalaVersion := "2.12.7"
 
-val akkaActorVersion = "2.5.21"
-val akkaHttpVersion = "10.2.0"
+val logbackClassicVersion = "0.9.24"
+val sttpVersion = "2.2.4"
+val json4sVersion = "3.6.0"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % akkaActorVersion,
-  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "com.softwaremill.sttp.client" %% "core" % sttpVersion,
+  "com.softwaremill.sttp.client" %% "json4s" % sttpVersion,
+  "org.json4s" %% "json4s-native" % json4sVersion,
   "com.enragedginger" %% "akka-quartz-scheduler" % "1.8.0-akka-2.5.x",
-  "ch.qos.logback" % "logback-classic" % "0.9.24"
+  "ch.qos.logback" % "logback-classic" % logbackClassicVersion
 )

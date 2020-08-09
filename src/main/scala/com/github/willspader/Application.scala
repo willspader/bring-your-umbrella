@@ -1,13 +1,16 @@
 package com.github.willspader
 
+import com.github.willspader.client.OWMHttpClient
 import org.quartz.{CronScheduleBuilder, JobBuilder, JobDetail, Scheduler, Trigger, TriggerBuilder}
 import org.quartz.impl.StdSchedulerFactory
-
 import com.github.willspader.job.WheaterJob
 
 object Application {
 
   def main(args: Array[String]): Unit = {
+
+    // OWM
+    // https://openweathermap.org/api/one-call-api
 
     // it creates the wheater job
     val job: JobDetail = JobBuilder.newJob(classOf[WheaterJob]).withIdentity("wheater-job").build()
@@ -21,7 +24,6 @@ object Application {
     scheduler.start()
     scheduler.scheduleJob(job, trigger)
 
-    // TODO: HTTP Request to a wheater API
     // TODO: Some messaging mechanism implementation for the notification (like Twilio)
   }
 
