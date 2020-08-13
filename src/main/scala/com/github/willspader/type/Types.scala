@@ -1,5 +1,6 @@
 package com.github.willspader.`type`
 
+
 object Types {
 
   case class WeatherResponse(hourly: List[WeatherInfo])

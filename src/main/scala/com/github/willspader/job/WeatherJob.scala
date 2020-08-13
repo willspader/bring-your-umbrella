@@ -7,6 +7,7 @@ import sttp.client.ResponseError
 
 import java.time.Instant
 
+
 class WeatherJob extends Job {
 
   // TODO: Constants file
