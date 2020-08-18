@@ -10,10 +10,9 @@ import java.time.Instant
 
 class WeatherJob extends Job {
 
-  // TODO: Constants file
   val REPORTS: Int = 12
 
-  override def execute(context: JobExecutionContext): Unit = {
+  override def execute(context: JobExecutionContext): Either[ResponseError[Exception], Boolean] = {
     val body: Either[ResponseError[Exception], Types.WeatherResponse] = OWMHttpClient.getDailyWeather.body
 
     if (body.isRight) {
@@ -24,7 +23,6 @@ class WeatherJob extends Job {
       body.right.get.hourly.zipWithIndex.foreach(weatherInfo => {
 
         if (weatherInfo._2 < REPORTS) {
-          // TODO: Constants file
           if ("Rain".equals(weatherInfo._1.weather.head.main)) {
             println(s"Vai chover as ${Instant.ofEpochSecond(weatherInfo._1.dt)}")
             println(s"Description: ${weatherInfo._1.weather.head.main}")
@@ -37,8 +35,10 @@ class WeatherJob extends Job {
         println("It will not rain for the next 12 hours")
       }
 
+      Right(willRain)
+
     } else {
-      // TODO: HTTP REQUEST FAILED
+      Left(body.left.get)
     }
   }
 }

@@ -6,6 +6,7 @@ import reactivemongo.api.{AsyncDriver, DefaultDB, MongoConnection => ReactiveCon
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
+
 object SharedMongoConnection {
 
   // as stated for reactivemongo docs

@@ -6,7 +6,7 @@ import reactivemongo.bson.{BSONDocument, BSONDocumentReader, Macros}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-case class City(id: Long, name: String, state: Option[String], country: String, coord: Coord)
+case class City(id: Int, name: String, state: Option[String], country: String, coord: Coord)
 
 case class Coord(lon: Double, lat: Double)
 
