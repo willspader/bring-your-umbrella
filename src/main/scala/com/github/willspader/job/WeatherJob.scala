@@ -4,41 +4,56 @@ import com.github.willspader.`type`.Types
 import com.github.willspader.client.OWMHttpClient
 import org.quartz.{Job, JobExecutionContext}
 import sttp.client.ResponseError
-
 import java.time.Instant
+
+import com.github.willspader.infrastructure.MongoConnection
+import com.github.willspader.model.{User, UserWriterReader}
+
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 
 class WeatherJob extends Job {
 
-  val REPORTS: Int = 12
+  private val owmhttpClient: OWMHttpClient = new OWMHttpClient
+  private val userWriterReader: UserWriterReader = new UserWriterReader
 
-  override def execute(context: JobExecutionContext): Either[ResponseError[Exception], Boolean] = {
-    val body: Either[ResponseError[Exception], Types.WeatherResponse] = OWMHttpClient.getDailyWeather.body
+  private val ec = scala.concurrent.ExecutionContext.Implicits.global
+  private val mongoConnection: MongoConnection = MongoConnection()
 
-    if (body.isRight) {
+  private val REPORTS: Int = 12
 
-      var willRain: Boolean = false
+  override def execute(context: JobExecutionContext): Unit = {
 
-      // zipWithIndex gives us a tuple w/ index and object -> ._1 is the object and ._2 is the index
-      body.right.get.hourly.zipWithIndex.foreach(weatherInfo => {
+    val eventualUsers: Future[List[User]] = userWriterReader.findRegisteredUsers()(mongoConnection, ec)
 
-        if (weatherInfo._2 < REPORTS) {
-          if ("Rain".equals(weatherInfo._1.weather.head.main)) {
-            println(s"Vai chover as ${Instant.ofEpochSecond(weatherInfo._1.dt)}")
-            println(s"Description: ${weatherInfo._1.weather.head.main}")
-            willRain = true
+    eventualUsers.onComplete {
+      case Success(users) =>
+        users.foreach(user => {
+          val body: Either[ResponseError[Exception], Types.WeatherResponse] = owmhttpClient.getDailyWeather(user.coord.lat, user.coord.lon).body
+
+          if (body.isRight) {
+            var willRain: Boolean = false
+
+            println(s" Usuario: ${user.name} - Cidade: ${user.city}")
+            body.right.get.hourly.zipWithIndex.foreach(weatherInfo => {
+              if (weatherInfo._2 < REPORTS) {
+                if ("Rain".equals(weatherInfo._1.weather.head.main)) {
+                  println(s"Vai chover as ${Instant.ofEpochSecond(weatherInfo._1.dt)}")
+                  println(s"Description: ${weatherInfo._1.weather.head.main}")
+                  willRain = true
+                }
+              }
+
+              if (!willRain) {
+                println("It will not rain for the next 12 hours")
+              }
+            })
+          } else {
+            print(body.left)
           }
-        }
-      })
-
-      if (!willRain) {
-        println("It will not rain for the next 12 hours")
-      }
-
-      Right(willRain)
-
-    } else {
-      Left(body.left.get)
-    }
+        })
+      case Failure(exception) => exception.printStackTrace()
+    }(ec)
   }
 }

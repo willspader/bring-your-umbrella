@@ -27,6 +27,7 @@ object SharedMongoConnection {
   // ```
   // for more information checkout http://reactivemongo.org/releases/0.11/documentation/tutorial/connect-database.html
 
+  // TODO: application.conf
   private lazy val mongoURI: String = "mongodb://localhost:27017"
 
   private lazy val driver: AsyncDriver = AsyncDriver()
@@ -43,6 +44,7 @@ object SharedMongoConnection {
 
 case class MongoConnection() {
 
+  // TODO: application.conf
   private lazy val dbName = "bring_your_umbrella_db"
   private lazy val sharedConnection = SharedMongoConnection.withConfig()
 
